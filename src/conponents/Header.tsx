@@ -7,9 +7,19 @@ import {
 } from "@chakra-ui/react";
 import { FaAirbnb, FaMoon } from "react-icons/fa";
 import LoginModal from "./LoginModal";
+import SignUpModal from "./SignUpModal";
 
 export default function Header() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isLoginOpen,
+    onOpen: onLoginOpen,
+    onClose: onLoginClose,
+  } = useDisclosure();
+  const {
+    isOpen: isSignUpOpen,
+    onOpen: onSignUpOpen,
+    onClose: onSignUpClose,
+  } = useDisclosure();
   return (
     <HStack
       justifyContent={"space-between"}
@@ -26,9 +36,12 @@ export default function Header() {
           aria-label="Toggle dark mode"
           icon={<FaMoon />}
         />
-        <Button onClick={onOpen}>Log In</Button>
-        <Button colorScheme="red">Sign Up</Button>
-        <LoginModal isOpen={isOpen} onClose={onClose} />
+        <Button onClick={onLoginOpen}>Log In</Button>
+        <Button onClick={onSignUpOpen} colorScheme="red">
+          Sign Up
+        </Button>
+        <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
+        <SignUpModal isOpen={isSignUpOpen} onClose={onSignUpClose} />
       </HStack>
     </HStack>
   );
