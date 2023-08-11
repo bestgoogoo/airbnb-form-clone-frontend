@@ -17,7 +17,7 @@ export default function Room() {
       <Box position="relative" mb={2} overflow="hidden" rounded="lg">
         <Image
           minH={280}
-          src="https://a0.muscache.com/im/pictures/6b3f1fe9-833f-449e-aacb-c2e9a2466ce7.jpg?im_w=720"
+          src="https://a0.muscache.com/im/pictures/miso/Hosting-30465706/original/a9f24f4c-a538-4d23-bdbb-3477addc963d.jpeg?im_w=720"
         />
         <Button
           variant="unstyled"
