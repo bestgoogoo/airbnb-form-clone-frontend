@@ -1,4 +1,11 @@
-import { Box, Button, Divider, HStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  HStack,
+  LightMode,
+  Text,
+} from "@chakra-ui/react";
 import { FaComment, FaGithub } from "react-icons/fa";
 
 export default function SocialLogin() {
@@ -17,9 +24,11 @@ export default function SocialLogin() {
         <Divider />
       </HStack>
       <HStack>
-        <Button w="100%" rightIcon={<FaGithub />} colorScheme={"blackAlpha"}>
-          Continue with
-        </Button>
+        <LightMode>
+          <Button w="100%" rightIcon={<FaGithub />} colorScheme={"blackAlpha"}>
+            Continue with
+          </Button>
+        </LightMode>
         <Button w="100%" rightIcon={<FaComment />} colorScheme={"yellow"}>
           Continue with
         </Button>
