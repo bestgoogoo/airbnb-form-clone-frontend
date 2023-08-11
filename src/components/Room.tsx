@@ -29,8 +29,8 @@ export default function Room({
 }: IRoomProps) {
   const grayFont = useColorModeValue("gray.600", "gray.400");
   return (
-    <VStack alignItems="flex-start" spacing={1}>
-      <Box position="relative" mb={2} overflow="hidden" rounded="lg">
+    <VStack alignItems="flex-start">
+      <Box position="relative" mb={2} overflow="hidden" rounded="2xl">
         <Image minH={280} src={imageUrl} />
         <Button
           variant="unstyled"
@@ -38,27 +38,26 @@ export default function Room({
           top={0}
           right={0}
           color="white"
-          cursor="pointer"
         >
           <FaRegHeart />
         </Button>
       </Box>
       <Box>
-        <Grid gap={2} templateColumns="5fr 1fr">
-          <Text as="b" noOfLines={1} fontSize="mb">
+        <Grid gap={2} templateColumns={"20fr 1fr"}>
+          <Text display={"block"} as="b" noOfLines={1} fontSize="md">
             {name}
           </Text>
-          <HStack spacing={1} justifyContent={"end"}>
+          <HStack spacing={1} alignItems="center">
             <FaStar size={10} />
-            <Text fontSize="mb">{rating}</Text>
+            <Text fontSize="sm">{rating}</Text>
           </HStack>
         </Grid>
-        <Text fontSize="mb" color={grayFont}>
+        <Text fontSize="sm" color={grayFont}>
           {city}, {country}
         </Text>
       </Box>
       <Box>
-        <Text fontSize="mb" color={grayFont}>
+        <Text fontSize="sm" color={grayFont}>
           <Text as="b">₩{price}</Text> / night
         </Text>
       </Box>
