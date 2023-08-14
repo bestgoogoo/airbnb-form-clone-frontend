@@ -12,7 +12,10 @@ export default function Home() {
   return (
     <Grid
       mt={10}
-      px={40}
+      px={{
+        base: 10,
+        lg: 40,
+      }}
       columnGap={5}
       rowGap={10}
       templateColumns={{
