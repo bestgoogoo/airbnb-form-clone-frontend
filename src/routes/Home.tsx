@@ -25,6 +25,7 @@ interface IRoom {
 export default function Home() {
   // useQuery(["key"], func) -> data is stored in cashe by key name
   const { isLoading, data } = useQuery<IRoom[]>(["rooms"], getRooms);
+  console.log(data);
   return (
     <Grid
       mt={10}
