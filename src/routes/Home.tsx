@@ -3,28 +3,11 @@ import { Grid } from "@chakra-ui/react";
 import { getRooms } from "../api";
 import RoomSkeleton from "../components/RoomSkeleton";
 import Room from "../components/Room";
-
-interface IPhoto {
-  pk: string;
-  file: string;
-  description: string;
-  created_at: string;
-}
-
-interface IRoom {
-  pk: number;
-  name: string;
-  country: string;
-  city: string;
-  price: number;
-  rating: number;
-  is_owner: boolean;
-  photos: IPhoto[];
-}
+import { IRoomList } from "../type";
 
 export default function Home() {
   // useQuery(["key"], func) -> data is stored in cashe by key name
-  const { isLoading, data } = useQuery<IRoom[]>(["rooms"], getRooms);
+  const { isLoading, data } = useQuery<IRoomList[]>(["rooms"], getRooms);
   console.log(data);
   return (
     <Grid
