@@ -25,11 +25,17 @@ export default function SocialLogin() {
       </HStack>
       <HStack>
         <LightMode>
-          <Button w="100%" rightIcon={<FaGithub />} colorScheme={"blackAlpha"}>
+          <Button
+            as="a"
+            href="https://github.com/login/oauth/authorize?client_id=72af9d41820cb7329816&scope=read:user,user:email"
+            rightIcon={<FaGithub />}
+            w="100%"
+            colorScheme={"blackAlpha"}
+          >
             Continue with
           </Button>
         </LightMode>
-        <Button w="100%" rightIcon={<FaComment />} colorScheme={"yellow"}>
+        <Button rightIcon={<FaComment />} w="100%" colorScheme={"yellow"}>
           Continue with
         </Button>
       </HStack>
