@@ -6,26 +6,25 @@ import { kakaoLogIn } from "../api";
 
 export default function KakaoConfirm() {
   const { search } = useLocation();
-  // const toast = useToast();
-  // const queryClient = useQueryClient();
-  // const navigate = useNavigate();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const confirmLogin = async () => {
     const params = new URLSearchParams(search);
     const code = params.get("code");
-    console.log(code);
-    // if (code) {
-    //   const status = await kakaoLogIn(code);
-    //   if (status === 200) {
-    //     toast({
-    //       status: "success",
-    //       title: "Welcome!😁",
-    //       description: "Happy to have you back!",
-    //       position: "top",
-    //     });
-    //     queryClient.refetchQueries(["me"]);
-    //     navigate("/");
-    //   }
-    // }
+    if (code) {
+      const status = await kakaoLogIn(code);
+      if (status === 200) {
+        toast({
+          status: "success",
+          title: "Welcome!😁",
+          description: "Happy to have you back!",
+          position: "top",
+        });
+        queryClient.refetchQueries(["me"]);
+        navigate("/");
+      }
+    }
   };
   useEffect(() => {
     confirmLogin();
