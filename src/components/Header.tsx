@@ -58,7 +58,10 @@ export default function Header() {
     <Stack
       justifyContent={"space-between"}
       py={5}
-      px={40}
+      px={{
+        base: 10,
+        lg: 40,
+      }}
       alignItems="center"
       spacing={{
         sm: "5",
