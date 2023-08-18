@@ -39,6 +39,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IForm>();
   const toast = useToast();
@@ -60,6 +61,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       });
       onClose();
       queryClient.refetchQueries(["me"]);
+      reset();
     },
     onError: () => {
       console.log("mutation has an error");
@@ -90,9 +92,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 variant={"filled"}
                 placeholder="Username"
               />
-              <Text fontSize="sm" color="red.600">
-                {errors.username?.message}
-              </Text>
             </InputGroup>
             <InputGroup>
               <InputLeftElement
@@ -109,11 +108,13 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 placeholder="Password"
                 type="password"
               />
-              <Text fontSize="sm" color="red.600">
-                {errors.password?.message}
-              </Text>
             </InputGroup>
           </VStack>
+          {mutation.isError ? (
+            <Text color="red.500" fontSize="md" textAlign="center">
+              Username or Password are Wrong
+            </Text>
+          ) : null}
           <Button
             isLoading={mutation.isLoading}
             type="submit"
