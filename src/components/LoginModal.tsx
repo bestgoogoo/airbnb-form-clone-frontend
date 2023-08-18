@@ -49,9 +49,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     IUsernameLogInError,
     IUsernameLogInVariables
   >(usernameLogIn, {
-    onMutate: () => {
-      console.log("mutation starting");
-    },
     onSuccess: () => {
       toast({
         status: "success",
@@ -62,9 +59,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       onClose();
       queryClient.refetchQueries(["me"]);
       reset();
-    },
-    onError: () => {
-      console.log("mutation has an error");
     },
   });
   const onSubmit = ({ username, password }: IForm) => {
@@ -88,7 +82,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               />
               <Input
                 isInvalid={Boolean(errors.username?.message)}
-                {...register("username", { required: "!" })}
+                {...register("username", { required: true })}
                 variant={"filled"}
                 placeholder="Username"
               />
@@ -103,7 +97,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               />
               <Input
                 isInvalid={Boolean(errors.password?.message)}
-                {...register("password", { required: "!" })}
+                {...register("password", { required: true })}
                 variant={"filled"}
                 placeholder="Password"
                 type="password"
