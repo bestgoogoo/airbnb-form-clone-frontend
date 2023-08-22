@@ -42,19 +42,16 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
   const toast = useToast();
   const queryClient = useQueryClient();
   const mutation = useMutation(signUp, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         status: "success",
-        title: "Please Log In!😁",
-        description: "Nice to meet you!",
+        title: `Hello, ${data.name}`,
+        description: " Nice to meet you!😁",
         position: "top",
       });
       queryClient.refetchQueries(["me"]);
       reset();
       onClose();
-    },
-    onError: (error) => {
-      console.log(error);
     },
   });
   const onSubmit = ({
