@@ -92,3 +92,24 @@ export const usernameLogIn = ({
       }
     )
     .then((response) => response.data);
+
+export interface ISignUpForm {
+  username: string;
+  password: string;
+  passwordConfirm: string;
+  name: string;
+  email: string;
+}
+
+export const signUp = ({ username, password, name, email }: ISignUpForm) =>
+  instance
+    .post(
+      "users/sign-up",
+      { username, password, name, email },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);

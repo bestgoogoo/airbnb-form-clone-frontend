@@ -10,7 +10,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import {
   FaLock,
@@ -21,28 +23,48 @@ import {
 } from "react-icons/fa";
 import SocialLogin from "./SocialLogin";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ISignUpForm, signUp } from "../api";
 
-interface ISignUpForm {
-  username: string;
-  password: string;
-  passwordConfirm: string;
-  name: string;
-  email: string;
-}
-
-interface LoginModalProps {
+interface SignUpProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function SignUpModal({ isOpen, onClose }: LoginModalProps) {
+export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
   const {
     register,
     handleSubmit,
+    reset,
+    watch,
     formState: { errors },
   } = useForm<ISignUpForm>();
-  const onSubmit = (data: ISignUpForm) => {
-    console.log(data);
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const mutation = useMutation(signUp, {
+    onSuccess: () => {
+      toast({
+        status: "success",
+        title: "Please Log In!😁",
+        description: "Nice to meet you!",
+        position: "top",
+      });
+      queryClient.refetchQueries(["me"]);
+      reset();
+      onClose();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+  const onSubmit = ({
+    username,
+    password,
+    passwordConfirm,
+    name,
+    email,
+  }: ISignUpForm) => {
+    mutation.mutate({ username, password, passwordConfirm, name, email });
   };
   return (
     <Modal motionPreset={"slideInRight"} isOpen={isOpen} onClose={onClose}>
@@ -60,8 +82,8 @@ export default function SignUpModal({ isOpen, onClose }: LoginModalProps) {
                   </Box>
                 }
               />
+              {/* 모든 Input에 custom error message가 필요함. */}
               <Input
-                isInvalid={Boolean(errors.username?.message)}
                 {...register("username", { required: true })}
                 variant={"filled"}
                 placeholder="Username"
@@ -78,6 +100,7 @@ export default function SignUpModal({ isOpen, onClose }: LoginModalProps) {
               <Input
                 isInvalid={Boolean(errors.password?.message)}
                 {...register("password", { required: true })}
+                type="password"
                 variant={"filled"}
                 placeholder="Password"
               />
@@ -91,12 +114,23 @@ export default function SignUpModal({ isOpen, onClose }: LoginModalProps) {
                 }
               />
               <Input
-                isInvalid={Boolean(errors.passwordConfirm?.message)}
-                {...register("passwordConfirm", { required: true })}
+                {...register("passwordConfirm", {
+                  validate: (value) => {
+                    if (watch("password") !== value) {
+                      return "";
+                    }
+                  },
+                })}
+                type="password"
                 variant={"filled"}
                 placeholder="Password Confirm"
               />
             </InputGroup>
+            {errors.passwordConfirm ? (
+              <Text color="red.500" fontSize="md" textAlign="center">
+                Password doesn`t match
+              </Text>
+            ) : null}
             <InputGroup>
               <InputLeftElement
                 children={
@@ -106,7 +140,6 @@ export default function SignUpModal({ isOpen, onClose }: LoginModalProps) {
                 }
               />
               <Input
-                isInvalid={Boolean(errors.name?.message)}
                 {...register("name", { required: true })}
                 variant={"filled"}
                 placeholder="Name"
@@ -121,14 +154,19 @@ export default function SignUpModal({ isOpen, onClose }: LoginModalProps) {
                 }
               />
               <Input
-                isInvalid={Boolean(errors.email?.message)}
                 {...register("email", { required: true })}
                 variant={"filled"}
                 placeholder="Email"
               />
             </InputGroup>
           </VStack>
-          <Button type="submit" mt={4} colorScheme={"red"} w="100%">
+          <Button
+            isLoading={mutation.isLoading}
+            type="submit"
+            mt={4}
+            colorScheme={"red"}
+            w="100%"
+          >
             Sign Up
           </Button>
           <SocialLogin />
