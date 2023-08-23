@@ -6,6 +6,7 @@ import {
   IconButton,
   Menu,
   MenuButton,
+  MenuItem,
   MenuList,
   Stack,
   useColorMode,
@@ -79,6 +80,11 @@ export default function Header() {
                 <Avatar name={user?.username} src={user?.avatar} size="md" />
               </MenuButton>
               <MenuList>
+                {user?.is_host ? (
+                  <Link to="rooms/upload">
+                    <MenuItem>Upload Room</MenuItem>
+                  </Link>
+                ) : null}
                 <LogOut />
               </MenuList>
             </Menu>
