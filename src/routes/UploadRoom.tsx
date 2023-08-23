@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { FaBed, FaDollarSign, FaToilet } from "react-icons/fa";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import useHostOnlyPage from "../components/HostOnlyPage";
 import ProtectedPgae from "../components/ProtectedPage";
@@ -27,19 +28,21 @@ import {
   getCategories,
   uploadRoom,
 } from "../api";
-import { IAmenity, ICategory } from "../type";
+import { IAmenity, ICategory, IRoomDetail } from "../type";
 
 export default function UploadRoom() {
   useHostOnlyPage();
   const { register, handleSubmit } = useForm<IUploadRoomVariables>();
   const toast = useToast();
+  const navigate = useNavigate();
   const mutation = useMutation(uploadRoom, {
-    onSuccess: () => {
+    onSuccess: (data: IRoomDetail) => {
       toast({
         status: "success",
         title: "Upload Success",
         position: "top",
       });
+      navigate(`/rooms/${data.id}`);
     },
   });
   const { data: amenities, isLoading: isAmenitiesLoading } = useQuery<
@@ -136,9 +139,7 @@ export default function UploadRoom() {
               <Textarea {...register("description", { required: true })} />
             </FormControl>
             <FormControl>
-              <Checkbox {...register("pet_friendly", { required: true })}>
-                Pet friendly?
-              </Checkbox>
+              <Checkbox {...register("pet_friendly")}>Pet friendly?</Checkbox>
             </FormControl>
             <FormControl>
               <FormLabel>Kind of Room</FormLabel>
