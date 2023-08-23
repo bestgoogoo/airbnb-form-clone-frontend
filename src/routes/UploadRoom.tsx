@@ -21,7 +21,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import useHostOnlyPage from "../components/HostOnlyPage";
-import ProtectedPgae from "../components/ProtectedPage";
+import ProtectedPage from "../components/ProtectedPage";
 import {
   IUploadRoomVariables,
   getAmenities,
@@ -55,7 +55,7 @@ export default function UploadRoom() {
     mutation.mutate(data);
   };
   return (
-    <ProtectedPgae>
+    <ProtectedPage>
       <Box mt={10} px={{ base: 10, lg: 40 }} pb={40}>
         <Container>
           <Heading textAlign="center">Upload Room</Heading>
@@ -199,6 +199,6 @@ export default function UploadRoom() {
           </VStack>
         </Container>
       </Box>
-    </ProtectedPgae>
+    </ProtectedPage>
   );
 }
