@@ -24,7 +24,7 @@ import {
 import SocialLogin from "./SocialLogin";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ISignUpForm, signUp } from "../api";
+import { ISignUpError, ISignUpSuccess, ISignUpVariables, signUp } from "../api";
 
 interface SignUpProps {
   isOpen: boolean;
@@ -36,32 +36,40 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
-  } = useForm<ISignUpForm>();
+  } = useForm<ISignUpVariables>();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const mutation = useMutation(signUp, {
-    onSuccess: (data) => {
-      toast({
-        status: "success",
-        title: `Hello, ${data.name}`,
-        description: " Nice to meet you!😁",
-        position: "top",
-      });
-      queryClient.refetchQueries(["me"]);
-      reset();
-      onClose();
-    },
-  });
+  const mutation = useMutation<ISignUpSuccess, ISignUpError, ISignUpVariables>(
+    signUp,
+    {
+      onSuccess: (data) => {
+        toast({
+          status: "success",
+          title: `Hello, ${data.name}(${data.username})`,
+          description: " Nice to meet you!😁",
+          position: "top",
+        });
+        queryClient.refetchQueries(["me"]);
+        reset();
+        onClose();
+      },
+    }
+  );
   const onSubmit = ({
     username,
     password,
     passwordConfirm,
     name,
     email,
-  }: ISignUpForm) => {
-    mutation.mutate({ username, password, passwordConfirm, name, email });
+  }: ISignUpVariables) => {
+    mutation.mutate({
+      username,
+      password,
+      passwordConfirm,
+      name,
+      email,
+    });
   };
   return (
     <Modal motionPreset={"slideInRight"} isOpen={isOpen} onClose={onClose}>
@@ -79,13 +87,30 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
                   </Box>
                 }
               />
-              {/* 모든 Input에 custom error message가 필요함. */}
               <Input
-                {...register("username", { required: true })}
+                isInvalid={Boolean(errors.username)}
+                {...register("username", { required: "Please Write" })}
                 variant={"filled"}
-                placeholder="Username"
+                placeholder={
+                  errors.username ? errors.username?.message : "Username"
+                }
+                _placeholder={
+                  errors.username
+                    ? { opacity: 1, color: "crimson" }
+                    : { opacity: 0.6, color: "inherit" }
+                }
               />
             </InputGroup>
+            {mutation.error?.response.data ? (
+              <Text
+                color="red.500"
+                fontWeight="bold"
+                fontSize="md"
+                textAlign="center"
+              >
+                {mutation.error?.response.data.usernameError}
+              </Text>
+            ) : null}
             <InputGroup>
               <InputLeftElement
                 children={
@@ -95,13 +120,30 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
                 }
               />
               <Input
-                isInvalid={Boolean(errors.password?.message)}
-                {...register("password", { required: true })}
+                isInvalid={Boolean(errors.password)}
+                {...register("password", { required: "Please Write" })}
                 type="password"
                 variant={"filled"}
-                placeholder="Password"
+                placeholder={
+                  errors.password ? errors.password?.message : "Password"
+                }
+                _placeholder={
+                  errors.password
+                    ? { opacity: 1, color: "crimson" }
+                    : { opacity: 0.6, color: "inherit" }
+                }
               />
             </InputGroup>
+            {mutation.error?.response.data ? (
+              <Text
+                color="red.500"
+                fontWeight="bold"
+                fontSize="md"
+                textAlign="center"
+              >
+                {mutation.error?.response.data.passwordError}
+              </Text>
+            ) : null}
             <InputGroup>
               <InputLeftElement
                 children={
@@ -111,21 +153,30 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
                 }
               />
               <Input
-                {...register("passwordConfirm", {
-                  validate: (value) => {
-                    if (watch("password") !== value) {
-                      return "";
-                    }
-                  },
-                })}
+                isInvalid={Boolean(errors.passwordConfirm)}
+                {...register("passwordConfirm", { required: "Please Write" })}
                 type="password"
                 variant={"filled"}
-                placeholder="Password Confirm"
+                placeholder={
+                  errors.passwordConfirm
+                    ? errors.passwordConfirm?.message
+                    : "Password Confirm"
+                }
+                _placeholder={
+                  errors.passwordConfirm
+                    ? { opacity: 1, color: "crimson" }
+                    : { opacity: 0.6, color: "inherit" }
+                }
               />
             </InputGroup>
-            {errors.passwordConfirm ? (
-              <Text color="red.500" fontSize="md" textAlign="center">
-                Password doesn`t match
+            {mutation.error?.response.data ? (
+              <Text
+                color="red.500"
+                fontWeight="bold"
+                fontSize="md"
+                textAlign="center"
+              >
+                {mutation.error?.response.data.passwordConfirmError}
               </Text>
             ) : null}
             <InputGroup>
@@ -137,9 +188,15 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
                 }
               />
               <Input
-                {...register("name", { required: true })}
+                isInvalid={Boolean(errors.name)}
+                {...register("name", { required: "Please Write" })}
                 variant={"filled"}
-                placeholder="Name"
+                placeholder={errors.name ? errors.name?.message : "Name"}
+                _placeholder={
+                  errors.name
+                    ? { opacity: 1, color: "crimson" }
+                    : { opacity: 0.6, color: "inherit" }
+                }
               />
             </InputGroup>
             <InputGroup>
@@ -151,9 +208,15 @@ export default function SignUpModal({ isOpen, onClose }: SignUpProps) {
                 }
               />
               <Input
-                {...register("email", { required: true })}
+                isInvalid={Boolean(errors.email)}
+                {...register("email", { required: "Please Write" })}
                 variant={"filled"}
-                placeholder="Email"
+                placeholder={errors.email ? errors.email?.message : "Email"}
+                _placeholder={
+                  errors.email
+                    ? { opacity: 1, color: "crimson" }
+                    : { opacity: 0.6, color: "inherit" }
+                }
               />
             </InputGroup>
           </VStack>

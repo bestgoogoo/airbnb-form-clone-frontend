@@ -97,19 +97,47 @@ export const usernameLogIn = ({
     )
     .then((response) => response.data);
 
-export interface ISignUpForm {
+export interface ISignUpVariables {
   username: string;
   password: string;
   passwordConfirm: string;
   name: string;
   email: string;
 }
+export interface ISignUpSuccess {
+  name: string;
+  username: string;
+}
+export interface ISignUpErrorType {
+  usernameError: string;
+  passwordError: string;
+  passwordConfirmError: string;
+}
+export interface ISignUpError {
+  response: {
+    data: ISignUpErrorType;
+    status: number;
+    statusText: string;
+  };
+}
 
-export const signUp = ({ username, password, name, email }: ISignUpForm) =>
+export const signUp = ({
+  username,
+  password,
+  passwordConfirm,
+  name,
+  email,
+}: ISignUpVariables) =>
   instance
     .post(
       "users/sign-up",
-      { username, password, name, email },
+      {
+        username,
+        password,
+        passwordConfirm,
+        name,
+        email,
+      },
       {
         headers: {
           "X-CSRFToken": Cookie.get("csrftoken") || "",
