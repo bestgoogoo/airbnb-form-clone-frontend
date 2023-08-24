@@ -74,7 +74,11 @@ export interface IUsernameLogInSuccess {
   ok: string;
 }
 export interface IUsernameLogInError {
-  error: string;
+  response: {
+    data: { error: string };
+    status: number;
+    statusText: string;
+  };
 }
 
 export const usernameLogIn = ({

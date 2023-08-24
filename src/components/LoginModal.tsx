@@ -49,16 +49,24 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     IUsernameLogInError,
     IUsernameLogInVariables
   >(usernameLogIn, {
-    onSuccess: () => {
+    onSuccess: (data, { username }) => {
       toast({
         status: "success",
-        title: "Welcome!😁",
+        title: `${username}, ${data.ok}`,
         description: "Happy to have you back!",
         position: "top",
       });
       onClose();
       queryClient.refetchQueries(["me"]);
       reset();
+    },
+    onError: (error) => {
+      toast({
+        status: "error",
+        title: error.response.data.error,
+        position: "top",
+      });
+      console.log(error.response);
     },
   });
   const onSubmit = ({ username, password }: IForm) => {
@@ -81,7 +89,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 }
               />
               <Input
-                isInvalid={Boolean(errors.username?.message)}
+                isInvalid={Boolean(errors.username)}
                 {...register("username", { required: true })}
                 variant={"filled"}
                 placeholder="Username"
@@ -96,7 +104,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 }
               />
               <Input
-                isInvalid={Boolean(errors.password?.message)}
+                isInvalid={Boolean(errors.password)}
                 {...register("password", { required: true })}
                 variant={"filled"}
                 placeholder="Password"
@@ -106,7 +114,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </VStack>
           {mutation.isError ? (
             <Text color="red.500" fontSize="md" textAlign="center">
-              Username or Password are Wrong
+              {mutation.error.response.data.error}
             </Text>
           ) : null}
           <Button
