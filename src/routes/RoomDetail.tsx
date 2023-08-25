@@ -1,11 +1,12 @@
 import "react-calendar/dist/Calendar.css";
 import Calendar from "react-calendar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import {
   Avatar,
   Box,
+  Button,
   Grid,
   GridItem,
   HStack,
@@ -17,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { FaCircle, FaStar } from "react-icons/fa";
-import { getRoom, getRoomReviews } from "../api";
+import { checkBooking, getRoom, getRoomReviews } from "../api";
 import { IReview, IRoomDetail } from "../type";
 
 export default function RoomDetail() {
@@ -27,17 +28,17 @@ export default function RoomDetail() {
     IReview[]
   >([`rooms`, roomPk, `reviews`], getRoomReviews);
   const [dates, setDates] = useState<Date[] | undefined>();
+  const { data: checkBookingData, isLoading: isCheckingBooking } = useQuery(
+    ["check", roomPk, dates],
+    checkBooking,
+    {
+      cacheTime: 0,
+      enabled: dates !== undefined,
+    }
+  );
   const handleDateChange = (value: any) => {
     setDates(value);
   };
-  useEffect(() => {
-    if (dates) {
-      const [firstDate, secondDate] = dates;
-      const [checkIn] = firstDate.toJSON().split("T");
-      const [checkOut] = secondDate.toJSON().split("T");
-      console.log(checkIn, checkOut);
-    }
-  }, [dates]);
   return (
     <Box
       mt={10}
@@ -111,7 +112,7 @@ export default function RoomDetail() {
           </GridItem>
         ))}
       </Grid>
-      <Grid gap={20} templateColumns="2fr 1fr" maxW="container.lg">
+      <Grid gap={60} templateColumns="2fr 1fr" maxW="container.xl">
         <Box>
           <HStack justifyContent="space-between" mt={10}>
             <VStack alignItems="flex-start">
@@ -158,8 +159,8 @@ export default function RoomDetail() {
             </Heading>
             <Grid mt={10} rowGap={10} columnGap={20} templateColumns="1fr 1fr">
               {reveiwsData?.map((review, index) => (
-                <Skeleton isLoaded={!isLoading}>
-                  <VStack alignItems="flex-start" key={index}>
+                <Skeleton isLoaded={!isLoading} key={index}>
+                  <VStack alignItems="flex-start">
                     <HStack>
                       <Avatar
                         size="lg"
@@ -168,9 +169,8 @@ export default function RoomDetail() {
                       />
                       <VStack alignItems="flex-start">
                         <Heading fontSize="xl">{review.user.username}</Heading>
-                        {/* I need syntax date data */}
                         <Text color="gray.400" fontSize="lg">
-                          {review.created_at}
+                          {review.created_at.substring(0, 10)}
                         </Text>
                       </VStack>
                     </HStack>
@@ -183,7 +183,7 @@ export default function RoomDetail() {
             </Grid>
           </Box>
         </Box>
-        <Box>
+        <Box mt={10}>
           <Calendar
             onChange={handleDateChange}
             selectRange
@@ -193,6 +193,18 @@ export default function RoomDetail() {
             prev2Label={null}
             next2Label={null}
           />
+          <Button
+            isDisabled={!checkBookingData?.ok}
+            isLoading={isCheckingBooking && checkBookingData !== undefined}
+            my={5}
+            w="100%"
+            colorScheme="red"
+          >
+            Book
+          </Button>
+          {!isCheckingBooking && !checkBookingData?.ok ? (
+            <Text color="crimson">Can`t book on those days</Text>
+          ) : null}
         </Box>
       </Grid>
     </Box>
