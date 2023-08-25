@@ -1,3 +1,7 @@
+import "react-calendar/dist/Calendar.css";
+import Calendar from "react-calendar";
+import type { Value } from "react-calendar/dist/cjs/shared/types";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import {
@@ -23,6 +27,8 @@ export default function RoomDetail() {
   const { isLoading: isReviewsLoading, data: reveiwsData } = useQuery<
     IReview[]
   >([`rooms`, roomPk, `reviews`], getRoomReviews);
+  const [dates, setDates] = useState<Value>();
+  console.log(dates);
   return (
     <Box
       mt={10}
@@ -96,74 +102,90 @@ export default function RoomDetail() {
           </GridItem>
         ))}
       </Grid>
-      <HStack width="50%" justifyContent="space-between">
-        <VStack alignItems="flex-start">
-          <Skeleton isLoaded={!isLoading} height="30px">
-            <Heading fontSize="2xl">
-              House hosted by {data?.owner.username}
-            </Heading>
-          </Skeleton>
-          <Skeleton
-            isLoaded={!isLoading}
-            height="20px"
-            justifyContent="flex-start"
-          >
-            <HStack w="100%" alignItems="center" fontSize="lg" spacing={2}>
-              <Text>
-                {data?.rooms} room{data?.rooms === 1 ? "" : "s"}
-              </Text>
-              <FaCircle size={2} />
-              <Text>
-                {data?.toilets} toliet{data?.toilets === 1 ? "" : "s"}
-              </Text>
-              <FaCircle size={2} />
-              <Text>and more..</Text>
-            </HStack>
-          </Skeleton>
-        </VStack>
-        <Avatar
-          size="xl"
-          name={data?.owner.username}
-          src={data?.owner.avatar}
-        />
-      </HStack>
-      <Box mt={10}>
-        <Heading mb={5} fontSize="2xl">
-          <HStack spacing={2} alignItems="center">
-            <FaStar />
-            <Text>{data?.rating}</Text>
-            <Text>•</Text>
-            <Text>
-              {reveiwsData?.length} review{reveiwsData?.length === 1 ? "" : "s"}
-            </Text>
+      <Grid gap={20} templateColumns="2fr 1fr" maxW="container.lg">
+        <Box>
+          <HStack justifyContent="space-between" mt={10}>
+            <VStack alignItems="flex-start">
+              <Skeleton isLoaded={!isLoading} height="30px">
+                <Heading fontSize="2xl">
+                  House hosted by {data?.owner.username}
+                </Heading>
+              </Skeleton>
+              <Skeleton
+                isLoaded={!isLoading}
+                height="20px"
+                justifyContent="flex-start"
+              >
+                <HStack w="100%" alignItems="center" fontSize="lg" spacing={2}>
+                  <Text>
+                    {data?.rooms} room{data?.rooms === 1 ? "" : "s"}
+                  </Text>
+                  <FaCircle size={2} />
+                  <Text>
+                    {data?.toilets} toliet{data?.toilets === 1 ? "" : "s"}
+                  </Text>
+                  <FaCircle size={2} />
+                  <Text>and more..</Text>
+                </HStack>
+              </Skeleton>
+            </VStack>
+            <Avatar
+              size="xl"
+              name={data?.owner.username}
+              src={data?.owner.avatar}
+            />
           </HStack>
-        </Heading>
-        <Grid mt={10} rowGap={10} columnGap={20} templateColumns="1fr 1fr">
-          {reveiwsData?.map((review, index) => (
-            <Skeleton isLoaded={!isLoading}>
-              <VStack alignItems="flex-start" key={index}>
-                <HStack>
-                  <Avatar
-                    size="lg"
-                    name={review.user.username}
-                    src={review.user.avatar}
-                  />
-                  <VStack alignItems="flex-start">
-                    <Heading fontSize="xl">{review.user.username}</Heading>
-                    {/* I need syntax date data */}
-                    <Text color="gray.400" fontSize="lg">
-                      {review.created_at}
+          <Box mt={10}>
+            <Heading mb={5} fontSize="2xl">
+              <HStack spacing={2} alignItems="center">
+                <FaStar />
+                <Text>{data?.rating}</Text>
+                <Text>•</Text>
+                <Text>
+                  {reveiwsData?.length} review
+                  {reveiwsData?.length === 1 ? "" : "s"}
+                </Text>
+              </HStack>
+            </Heading>
+            <Grid mt={10} rowGap={10} columnGap={20} templateColumns="1fr 1fr">
+              {reveiwsData?.map((review, index) => (
+                <Skeleton isLoaded={!isLoading}>
+                  <VStack alignItems="flex-start" key={index}>
+                    <HStack>
+                      <Avatar
+                        size="lg"
+                        name={review.user.username}
+                        src={review.user.avatar}
+                      />
+                      <VStack alignItems="flex-start">
+                        <Heading fontSize="xl">{review.user.username}</Heading>
+                        {/* I need syntax date data */}
+                        <Text color="gray.400" fontSize="lg">
+                          {review.created_at}
+                        </Text>
+                      </VStack>
+                    </HStack>
+                    <Text px={5} fontSize="lg" noOfLines={3}>
+                      {review.payload}
                     </Text>
                   </VStack>
-                </HStack>
-                <Text px={5} fontSize="lg" noOfLines={3}>
-                  {review.payload}
-                </Text>
-              </VStack>
-            </Skeleton>
-          ))}
-        </Grid>
-      </Box>
+                </Skeleton>
+              ))}
+            </Grid>
+          </Box>
+        </Box>
+        <Box>
+          <Calendar
+            onChange={setDates}
+            selectRange
+            minDate={new Date()}
+            maxDate={new Date(Date.now() + ((60 * 60 * 24 * 365) / 2) * 1000)}
+            minDetail="month"
+            prev2Label={null}
+            next2Label={null}
+          />
+        </Box>
+      </Grid>
     </Box>
   );
 }
