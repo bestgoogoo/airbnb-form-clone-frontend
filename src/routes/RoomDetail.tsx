@@ -1,7 +1,6 @@
 import "react-calendar/dist/Calendar.css";
 import Calendar from "react-calendar";
-import type { Value } from "react-calendar/dist/cjs/shared/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import {
@@ -27,8 +26,18 @@ export default function RoomDetail() {
   const { isLoading: isReviewsLoading, data: reveiwsData } = useQuery<
     IReview[]
   >([`rooms`, roomPk, `reviews`], getRoomReviews);
-  const [dates, setDates] = useState<Value>();
-  console.log(dates);
+  const [dates, setDates] = useState<Date[] | undefined>();
+  const handleDateChange = (value: any) => {
+    setDates(value);
+  };
+  useEffect(() => {
+    if (dates) {
+      const [firstDate, secondDate] = dates;
+      const [checkIn] = firstDate.toJSON().split("T");
+      const [checkOut] = secondDate.toJSON().split("T");
+      console.log(checkIn, checkOut);
+    }
+  }, [dates]);
   return (
     <Box
       mt={10}
@@ -176,7 +185,7 @@ export default function RoomDetail() {
         </Box>
         <Box>
           <Calendar
-            onChange={setDates}
+            onChange={handleDateChange}
             selectRange
             minDate={new Date()}
             maxDate={new Date(Date.now() + ((60 * 60 * 24 * 365) / 2) * 1000)}
